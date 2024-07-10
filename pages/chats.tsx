@@ -13,24 +13,23 @@ const Chats = () => {
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [messageText, setMessageText] = useState<string>('');
   const [newUser, setNewUser] = useState<Chat | null>(null);
-
   useEffect(() => {
     const fetchNewUser = async () => {
       const userData = await getNewUserData();
-      console.log(userData.results[0])
       setNewUser({
-        id: userData.id,
+        id: userData.results[0].id.value,
         name: `${userData.results[0].name.first} ${userData.results[0].name.last}`,
         profilePicture: userData.results[0].picture.medium,
         lastMessage: "",
         messages: [],
-        profession:"Unemployed"
+        profession: "Unemployed"
       });
     };
     fetchNewUser();
   }, []);
 
   const handleSelectChat = (chat: Chat) => {
+    
     setSelectedChat(chat);
   };
 
@@ -41,7 +40,7 @@ const Chats = () => {
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         sender: 'user',
       };
-  
+
       setSelectedChat(prevChat => {
         if (prevChat) {
           const updatedChat = {
@@ -49,33 +48,42 @@ const Chats = () => {
             messages: [...prevChat.messages, newMessage],
             lastMessage: newMessage.text,
           };
-  
+
           setChats(prevChats =>
             prevChats.map(chat => (chat.id === prevChat.id ? updatedChat : chat))
           );
-  
+
           return updatedChat;
         }
         return null;
       });
-  
+
       setMessageText('');
     }
   };
-  
 
-  const handleAddChat = (chat: Chat) => {
+  const handleAddChat = async (chat: Chat) => {
+    const userData = await getNewUserData();
+    setNewUser({
+      id: userData.id,
+      name: `${userData.results[0].name.first} ${userData.results[0].name.last}`,
+      profilePicture: userData.results[0].picture.medium,
+      lastMessage: "",
+      messages: [],
+      profession: "Unemployed"
+    });
+
     setChats(prevChats => [...prevChats, chat]);
     setSelectedChat(chat);
   };
 
   return (
     <div className={styles.container}>
-      <Sidebar 
+      <Sidebar
         chats={chats}
         newUser={newUser}
-        onSelectChat={handleSelectChat} 
-        selectedChatId={selectedChat ? selectedChat.id : null} 
+        onSelectChat={handleSelectChat}
+        selectedChatId={selectedChat ? selectedChat.id : null}
         onAddChat={handleAddChat}
       />
       <div className={styles.chatSection}>
@@ -86,9 +94,9 @@ const Chats = () => {
                 <img className={styles.chatSectionHeaderFoto} src={selectedChat.profilePicture} alt="Profile" />
               </div>
               <div className={styles.chatSectionHeaderName}>
-                {selectedChat.name} <br/>
+                {selectedChat.name} <br />
                 <span className={styles.chatSectionHeaderProfession}>{selectedChat.profession}</span>
-                </div>
+              </div>
             </>
           ) : (
             <div className={styles.noChatSelected}>Seleccione algún chat para iniciar</div>
@@ -108,7 +116,6 @@ const Chats = () => {
                     direction: msg.sender === 'user' ? 'outgoing' : 'incoming',
                     position: 'single',
                   }}
-                  
                 />
               ))}
             </div>

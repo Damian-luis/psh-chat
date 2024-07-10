@@ -27,6 +27,8 @@
 .containerMiddleSide {
    display: flex;
    justify-content: space-around;
+   flex-grow: 1;
+  overflow-y: auto;
 }
 
 .divTextoNames {

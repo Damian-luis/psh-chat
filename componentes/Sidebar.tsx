@@ -40,6 +40,7 @@ const Sidebar: React.FC<SidebarProps> = ({ chats, newUser, onSelectChat, selecte
   };
 
   const handleChatClick = (chat: Chat) => {
+
     onSelectChat(chat);
   };
 
