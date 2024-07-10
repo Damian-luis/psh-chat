@@ -1,0 +1,94 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: antiquewhite;
+  height: auto;
+  
+}
+
+.chatSection {
+  width: 100%;
+  height: 100vh;
+  background-color: antiquewhite;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chatSectionHeader {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+  padding-bottom: 40px;
+}
+
+.chatSectionHeaderFoto {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+}
+
+.chatSectionHeaderName {
+  font-weight: 700;
+  font-size: 25px;
+}
+
+.messageList {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.messageInputContainer {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f0f0f0;
+  border-top: 1px solid #ccc;
+}
+
+.messageInput {
+  flex: 1;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.sendMessageButton {
+  padding: 8px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.sendMessageButton:hover {
+  background-color: #0056b3;
+}
+
+.noChatSelected {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #666;
+}
+
+@media (min-width: 768px) {
+  .container {
+    flex-direction: row;
+  }
+  .chatSection {
+    width: 70%;
+  }
+  .chatSectionHeaderFoto {
+    width: 80px;
+    height: 80px;
+  }
+}
