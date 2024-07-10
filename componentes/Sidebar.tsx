@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import styles from './Sidebar.module.css';
-import { chats } from '../mocks/chats';
 import { Chat } from '@/interfaces';
 import { Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -10,21 +9,20 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import PersonIcon from '@mui/icons-material/Person';
-import { blue } from '@mui/material/colors';
-import { getNewUserData } from '@/pages/api';
+
 interface SidebarProps {
+  chats: Chat[];
+  newUser: Chat | null;
   onSelectChat: (chat: Chat) => void;
   selectedChatId: number | null;
+  onAddChat: (chat: Chat) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onSelectChat, selectedChatId }) => {
+const Sidebar: React.FC<SidebarProps> = ({ chats, newUser, onSelectChat, selectedChatId, onAddChat }) => {
   const [open, setOpen] = useState(false);
-  const emails = ['username@gmail.com', 'user02@gmail.com'];
-  
- 
+
   const handleClose = () => {
     setOpen(false);
   };
@@ -33,9 +31,16 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelectChat, selectedChatId }) => {
     setOpen(true);
   };
 
-  const handleListItemClick = (email: string) => {
-    console.log(email);
-    handleClose();
+  const handleAddNewChat = () => {
+    if (newUser) {
+      onAddChat(newUser);
+      onSelectChat(newUser);
+      setOpen(false); 
+    }
+  };
+
+  const handleChatClick = (chat: Chat) => {
+    onSelectChat(chat);
   };
 
   return (
@@ -49,8 +54,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelectChat, selectedChatId }) => {
         {chats.map(chat => (
           <div
             key={chat.id}
-            className={`${styles.chatItem} ${selectedChatId === chat.id ? styles.selectedChat : ''}`}
-            onClick={() => onSelectChat(chat)}
+            style={selectedChatId === chat.id ? { backgroundColor: 'red' } : {}}
+            className={`${styles.chatItem} ${selectedChatId === chat.id ? styles.selectedChat : styles.unselectedChat}`}
+            onClick={() => handleChatClick(chat)}
           >
             <div className={styles.divFoto}>
               <img className={styles.foto} src={chat.profilePicture} alt="Foto de usuario" />
@@ -79,20 +85,19 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelectChat, selectedChatId }) => {
       </div>
 
       <Dialog onClose={handleClose} open={open}>
-        <DialogTitle>Elegir nuevo chat</DialogTitle>
         <List sx={{ pt: 0 }}>
-          {emails.map((email) => (
-            <ListItem disableGutters key={email}>
-              <ListItemButton onClick={() => handleListItemClick(email)}>
+          {newUser && (
+            <ListItem disableGutters>
+              <ListItemButton onClick={handleAddNewChat}>
                 <ListItemAvatar>
-                  <Avatar sx={{ bgcolor: blue[100], color: blue[600] }}>
+                  <Avatar src={newUser.profilePicture}>
                     <PersonIcon />
                   </Avatar>
                 </ListItemAvatar>
-                <ListItemText primary={email} />
+                <ListItemText primary={newUser.name} />
               </ListItemButton>
             </ListItem>
-          ))}
+          )}
         </List>
       </Dialog>
     </div>
@@ -100,4 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSelectChat, selectedChatId }) => {
 };
 
 export default Sidebar;
+
+
+
 

@@ -10,6 +10,7 @@ export interface IMessage {
     name: string;
     lastMessage: string;
     messages: IMessage[];
-    profilePicture:string
+    profilePicture:string;
+    profession:string
   }
   

@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap');
+
 .container {
   display: flex;
   flex-direction: column;
   width: 100%;
   background-color: antiquewhite;
   height: auto;
-  
+  font-family: 'Montserrat', sans-serif;
 }
 
 .chatSection {
@@ -35,6 +37,10 @@
   font-size: 25px;
 }
 
+.chatSectionHeaderProfession {
+  font-weight: 500;
+  font-size: 18px;
+}
 .messageList {
   flex: 1;
   overflow-y: auto;
@@ -80,7 +86,7 @@
   color: #666;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1300px) {
   .container {
     flex-direction: row;
   }

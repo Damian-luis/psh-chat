@@ -1,16 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './Chats.module.css';
 import Sidebar from '@/componentes/Sidebar';
 import { Chat } from '@/interfaces';
 import { MessageList, Message } from '@chatscope/chat-ui-kit-react';
 import { IMessage } from '@/interfaces';
+import { getNewUserData } from '@/pages/api';
+import { chats as mockChats } from '../mocks/chats';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 
 const Chats = () => {
+  const [chats, setChats] = useState<Chat[]>(mockChats);
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [messageText, setMessageText] = useState<string>('');
+  const [newUser, setNewUser] = useState<Chat | null>(null);
 
-  const handleSelectChat = (chat: any) => {
+  useEffect(() => {
+    const fetchNewUser = async () => {
+      const userData = await getNewUserData();
+      console.log(userData.results[0])
+      setNewUser({
+        id: userData.id,
+        name: `${userData.results[0].name.first} ${userData.results[0].name.last}`,
+        profilePicture: userData.results[0].picture.medium,
+        lastMessage: "",
+        messages: [],
+        profession:"Unemployed"
+      });
+    };
+    fetchNewUser();
+  }, []);
+
+  const handleSelectChat = (chat: Chat) => {
     setSelectedChat(chat);
   };
 
@@ -21,28 +41,43 @@ const Chats = () => {
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         sender: 'user',
       };
+  
       setSelectedChat(prevChat => {
         if (prevChat) {
-          return {
+          const updatedChat = {
             ...prevChat,
             messages: [...prevChat.messages, newMessage],
+            lastMessage: newMessage.text,
           };
+  
+          setChats(prevChats =>
+            prevChats.map(chat => (chat.id === prevChat.id ? updatedChat : chat))
+          );
+  
+          return updatedChat;
         }
         return null;
       });
+  
       setMessageText('');
     }
   };
-
-
+  
 
   const handleAddChat = (chat: Chat) => {
-    // Handle new chat addition if needed
+    setChats(prevChats => [...prevChats, chat]);
+    setSelectedChat(chat);
   };
 
   return (
     <div className={styles.container}>
-      <Sidebar onSelectChat={handleSelectChat} selectedChatId={selectedChat ? selectedChat.id : null}/>
+      <Sidebar 
+        chats={chats}
+        newUser={newUser}
+        onSelectChat={handleSelectChat} 
+        selectedChatId={selectedChat ? selectedChat.id : null} 
+        onAddChat={handleAddChat}
+      />
       <div className={styles.chatSection}>
         <div className={styles.chatSectionHeader}>
           {selectedChat ? (
@@ -50,7 +85,10 @@ const Chats = () => {
               <div>
                 <img className={styles.chatSectionHeaderFoto} src={selectedChat.profilePicture} alt="Profile" />
               </div>
-              <div className={styles.chatSectionHeaderName}>{selectedChat.name}</div>
+              <div className={styles.chatSectionHeaderName}>
+                {selectedChat.name} <br/>
+                <span className={styles.chatSectionHeaderProfession}>{selectedChat.profession}</span>
+                </div>
             </>
           ) : (
             <div className={styles.noChatSelected}>Seleccione algún chat para iniciar</div>
@@ -70,6 +108,7 @@ const Chats = () => {
                     direction: msg.sender === 'user' ? 'outgoing' : 'incoming',
                     position: 'single',
                   }}
+                  
                 />
               ))}
             </div>
@@ -93,3 +132,5 @@ const Chats = () => {
 };
 
 export default Chats;
+
+
